@@ -1,0 +1,38 @@
+name: Fetch Apple & CDN IPs
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"  # 每周一 00:00 UTC 执行
+  workflow_dispatch:     # 也允许手动触发
+
+permissions:
+  contents: write  # 允许 GitHub Actions 推送代码
+  issues: write    # 允许 GitHub Actions 管理 issues
+
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip install requests netaddr
+
+      - name: Fetch IP ranges
+        run: |
+          python scripts/fetch_asn.py
+
+      - name: Commit & Push
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.txt
+          git commit -m "Update IP ranges [auto]" || echo "No changes to commit"
+          git push

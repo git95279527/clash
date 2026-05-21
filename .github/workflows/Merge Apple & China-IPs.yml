@@ -1,0 +1,53 @@
+name: Merge Apple & China-IPs
+
+# 定义触发器，定期执行此工作流
+on:
+  schedule:
+    - cron: "0 0 * * 1"  # 每周一 00:00 UTC 执行
+  workflow_dispatch:     # 也允许手动触发
+
+
+permissions:
+  contents: write  # 允许 GitHub Actions 推送代码
+  issues: write    # 允许 GitHub Actions 管理 issues
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 检出代码仓库
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 拉取远程文件
+    - name: Download conf files
+      run: |
+        curl -s -o ip-cidr.txt https://raw.githubusercontent.com/Hackl0us/GeoIP2-CN/release/CN-ip-cidr.txt
+        curl -s -o china_ip6_route.txt https://ispip.clang.cn/all_cn_ipv6.txt
+
+    # 使用 sed 命令清洗并合并文件
+    - name: Modify and merge IP lists
+      run: |
+        # 清除空行与注释
+        sed -i '/^\s*$/d; /^#/d' ip-cidr.txt
+        sed -i '/^\s*$/d; /^#/d' china_ip6_route.txt
+
+        # 合并 IPv4 列表
+        cat ./data/*ipv4.txt ip-cidr.txt > CN-ip-cidr.txt
+
+        # 合并 IPv6 列表
+        cat ./data/*ipv6.txt china_ip6_route.txt > CN-ip-cidr6.txt
+
+        # 清理中间文件
+        rm -f ip-cidr.txt china_ip6_route.txt
+
+
+    # 提交修改并推送到仓库
+    - name: Commit and push changes
+      run: |
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Update file"
+        git push
