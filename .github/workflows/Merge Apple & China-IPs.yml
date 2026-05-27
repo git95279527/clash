@@ -3,7 +3,7 @@ name: Merge Apple & China-IPs
 # 定义触发器，定期执行此工作流
 on:
   schedule:
-    - cron: "0 3 * * 1"  # 每周一 00:00 UTC 执行
+    - cron: "30 3 * * 1"  # 每周一 00:00 UTC 执行
   workflow_dispatch:     # 也允许手动触发
 
 
