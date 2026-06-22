@@ -2,7 +2,7 @@ name: Fetch Apple & CDN IPs
 
 on:
   schedule:
-    - cron: "0 19 * * 0"  # 每周一 00:00 UTC 执行
+    - cron: "0 19 * * 1"  # 每周一 00:00 UTC 执行
   workflow_dispatch:     # 也允许手动触发
 
 permissions:
