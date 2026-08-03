@@ -35,9 +35,11 @@ jobs:
 
         # 合并 IPv4 列表
         cat ./data/*ipv4.txt ip-cidr.txt > CN-ip-cidr.txt
+        sha256sum CN-ip-cidr.txt > CN-ip-cidr.txt.sha256sum
 
         # 合并 IPv6 列表
         cat ./data/*ipv6.txt china_ip6_route.txt > CN-ip-cidr6.txt
+        sha256sum CN-ip-cidr6.txt > CN-ip-cidr6.txt.sha256sum
 
         # 清理中间文件
         rm -f ip-cidr.txt china_ip6_route.txt
