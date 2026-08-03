@@ -32,7 +32,7 @@ jobs:
         # 清除空行与注释
         sed -i '/^\s*$/d; /^#/d' ip-cidr.txt
         sed -i '/^\s*$/d; /^#/d' china_ip6_route.txt
-
+        rm -f CN-ip-cidr.txt.sha256sum CN-ip-cidr6.txt.sha256sum
         # 合并 IPv4 列表
         cat ./data/*ipv4.txt ip-cidr.txt > CN-ip-cidr.txt
         sha256sum CN-ip-cidr.txt > CN-ip-cidr.txt.sha256sum
